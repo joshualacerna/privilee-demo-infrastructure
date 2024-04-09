@@ -1,0 +1,28 @@
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: traefik-letsencrypt
+spec:
+  acme:
+    server: https://acme-v02.api.letsencrypt.org/directory
+    email: josh.borja.lacerna@gmail.com
+    privateKeySecretRef:
+      name: traefik-cert-manager-clusterissuer-prod-key
+    solvers:
+      - http01:
+          ingress:
+            class: traefik-cert-manager
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: privilee-demo-golang
+  namespace: services
+spec:
+  commonName: hello-privilee.cloudlogicdemo.com
+  secretName: hello-privilee.cloudlogicdemo.com
+  dnsNames:
+    - hello-privilee.cloudlogicdemo.com
+  issuerRef:
+    name: traefik-letsencrypt
+    kind: ClusterIssuer
